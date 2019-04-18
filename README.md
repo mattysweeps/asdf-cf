@@ -1,4 +1,5 @@
 # asdf-cf
+[![Build Status](https://travis-ci.org/mattysweeps/asdf-cf.svg)](https://travis-ci.org/mattysweeps/asdf)
 
 [cf](https://github.com/cloudfoundry/cli) plugin for the [asdf](https://github.com/asdf-vm/asdf) version manager.
 
