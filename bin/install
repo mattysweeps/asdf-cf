@@ -23,7 +23,6 @@ install_cf() {
   local install_path=$3
   local platform="$(uname | tr '[:upper:]' '[:lower:]')-amd64"
   local bin_install_path="$install_path/bin"
-  local binary_path="$bin_install_path/cf"
   local download_url=$(get_download_url $version $platform)
 
   if [ "$TMPDIR" = "" ]; then
@@ -32,7 +31,7 @@ install_cf() {
     local tmp_download_dir=$TMPDIR
   fi
 
-  local download_path="$tmp_download_dir/cf-${version}-${platform})"
+  local download_path="$tmp_download_dir/cf-${version}-${platform}"
 
   echo "Downloading cf from ${download_url} to ${download_path}"
   curl -Lo $download_path $download_url
@@ -41,12 +40,12 @@ install_cf() {
   mkdir -p "${bin_install_path}"
 
   echo "Cleaning previous binaries"
-  rm -f $binary_path 2>/dev/null || true
+  rm -f ${bin_install_path}/cf* 2>/dev/null || true
 
   echo "Copying binary"
   tar -zxf ${download_path} --directory $tmp_download_dir
-  cp ${tmp_download_dir}/cf ${bin_install_path}
-  chmod +x ${binary_path}
+  cp ${tmp_download_dir}/cf* ${bin_install_path}/
+  chmod +x ${bin_install_path}/cf*
 }
 
 get_download_url() {
