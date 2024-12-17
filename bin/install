@@ -57,11 +57,17 @@ get_download_url() {
     darwin-amd64)
       release="macosx64-binary"
       ;;
+    darwin-arm64)
+      release="macoarm-binary"
+      ;;
     linux-386)
       release="linux32-binary"
       ;;
     linux-amd64)
       release="linux64-binary"
+      ;;
+    linux-arm64)
+      release="linuxarm64-binary"
       ;;
     windows-386)
       release="windows32-exe"
