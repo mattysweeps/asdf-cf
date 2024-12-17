@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 Google LLC
-# 
+# Copyright 2024 Google LLC
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
@@ -18,64 +18,64 @@ set -e
 set -o pipefail
 
 install_cf() {
-  local install_type=$1
-  local version=$2
-  local install_path=$3
-  local platform="$(uname | tr '[:upper:]' '[:lower:]')-amd64"
-  local bin_install_path="$install_path/bin"
-  local download_url=$(get_download_url $version $platform)
+  local -r install_type=$1
+  local -r version=$2
+  local -r install_path=$3
+  local -r platform="$(uname | tr '[:upper:]' '[:lower:]')-amd64"
+  local -r bin_install_path="$install_path/bin"
+  local -r download_url=$(get_download_url "$version" "$platform")
 
   if [ "$TMPDIR" = "" ]; then
-    local tmp_download_dir=$(mktemp -d -t cf_XXXXXX)
+    local -r tmp_download_dir=$(mktemp -d -t cf_XXXXXX)
   else
-    local tmp_download_dir=$TMPDIR
+    local -r tmp_download_dir=$TMPDIR
   fi
 
-  local download_path="$tmp_download_dir/cf-${version}-${platform}"
+  local -r download_path="$tmp_download_dir/cf-${version}-${platform}"
 
   echo "Downloading cf from ${download_url} to ${download_path}"
-  curl -Lo $download_path $download_url
+  curl -Lo "$download_path" "$download_url"
 
   echo "Creating bin directory"
   mkdir -p "${bin_install_path}"
 
   echo "Cleaning previous binaries"
-  rm -f ${bin_install_path}/cf* 2>/dev/null || true
+  rm -f "${bin_install_path}"/cf* 2>/dev/null || true
 
   echo "Copying binary"
-  tar -zxf ${download_path} --directory $tmp_download_dir
-  cp ${tmp_download_dir}/cf* ${bin_install_path}/
-  chmod +x ${bin_install_path}/cf*
+  tar -zxf "${download_path}" --directory "$tmp_download_dir"
+  cp "${tmp_download_dir}"/cf* "${bin_install_path}/"
+  chmod +x "${bin_install_path}"/cf*
 }
 
 get_download_url() {
-  local version="$1"
-  local platform="$2"
+  local -r version=$1
+  local -r platform=$2
 
   local release=""
   case $platform in
-    linux-amd64)
-      release="linux64-binary"
+    darwin-amd64)
+      release="macosx64-binary"
       ;;
     linux-386)
       release="linux32-binary"
       ;;
-    darwin-amd64)
-      release="macosx64-binary"
-      ;;
-    windows-amd64)
-      release="windows64-exe"
+    linux-amd64)
+      release="linux64-binary"
       ;;
     windows-386)
       release="windows32-exe"
       ;;
+    windows-amd64)
+      release="windows64-exe"
+      ;;
     *)
       echo "Unsupported platform ${platform}" 1>&2
-      exit -1
+      exit 1
       ;;
   esac
 
   echo "https://packages.cloudfoundry.org/stable?release=${release}&version=${version}"
 }
 
-install_cf $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+install_cf "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
